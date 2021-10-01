@@ -17,7 +17,9 @@
           <div class="form p-4 border my-5">
             <h3 class="title text-center text-primary">Tính điểm nodejs</h3>
             <div class="form-group username">
-              <label for="name" class="font-weight-bold">Cộng điểm cho: </label>
+              <label for="name" class="font-weight-bold"
+                >Cộng điểm cho (all: tất cả):
+              </label>
               <input
                 class="form-control"
                 type="text"
@@ -134,6 +136,14 @@
       function calcGrade() {
         let username = $("#username").value;
         let grade = $("#grade").value;
+        if (username == "all") {
+          let gradePlus = +grade * (+$("#gradePercent").value / 100 || 1);
+          data.forEach(item => {
+            item.grade += +gradePlus;
+          });
+          return renderResults(data, resultLabel);
+        }
+
         let user = isUser(data, username);
 
         // check user
