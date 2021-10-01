@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tính điểm nhóm</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+  </head>
+  <body class="bg-secondary">
+    <div class="container text-white">
+      <div class="row">
+        <div class="col-6 offset-3">
+          <div class="form p-4 border my-5">
+            <h3 class="title text-center text-primary">Tính điểm nodejs</h3>
+            <div class="form-group username">
+              <label for="name" class="font-weight-bold">Cộng điểm cho: </label>
+              <input
+                class="form-control"
+                type="text"
+                id="username"
+                placeholder="Enter first name..."
+              />
+            </div>
+            <div class="form-group grade">
+              <label for="grade" class="font-weight-bold">Số điểm(đ): </label>
+              <input
+                class="form-control"
+                type="number"
+                id="grade"
+                placeholder="Enter grade..."
+              />
+            </div>
+
+            <div class="form-group grade">
+              <label for="grade" class="font-weight-bold"
+                >Điểm cộng cho thành viên khác(%):
+              </label>
+              <input
+                class="form-control"
+                type="number"
+                id="gradePercent"
+                placeholder="Enter percent..."
+              />
+            </div>
+            <button class="btn btn-primary" id="addButton">Cộng</button>
+          </div>
+        </div>
+      </div>
+      <table class="table table-dark">
+        <thead class="bg-primary">
+          <tr>
+            <th>STT</th>
+            <th>Họ</th>
+            <th>Tên</th>
+            <th>Điểm</th>
+          </tr>
+        </thead>
+        <tbody class="result" id="resultGrade"></tbody>
+      </table>
+    </div>
+    <script>
+      const $ = document.querySelector.bind(document);
+      const $$ = document.querySelectorAll.bind(document);
+      const data = [
+        {
+          firstname: "minh",
+          id: "1",
+          lastname: "chìu cắm",
+          grade: 0,
+        },
+        {
+          firstname: "Tùng",
+          id: "2",
+          lastname: "Nguyễn Xuân",
+          grade: 0,
+        },
+        {
+          firstname: "Sơn",
+          id: "3",
+          lastname: "Hồ Trọng",
+          grade: 0,
+        },
+        {
+          firstname: "Tân",
+          id: "4",
+          lastname: "Lê Văn Anh",
+          grade: 0,
+        },
+        {
+          firstname: "Châu",
+          id: "5",
+          lastname: "Tôn Long",
+          grade: 0,
+        },
+      ];
+
+      const resultLabel = $("#resultGrade");
+
+      function renderResults(data, container) {
+        let html = data
+          .map(
+            (user, index) => `
+          <tr>
+            <td>${index}</td>
+            <td>${user.lastname}</td>
+            <td>${user.firstname}</td>
+            <td class="gradeResult" id="${username.firstname}${index}">${user.grade}</td>
+          </tr>
+        `
+          )
+          .join("");
+
+        container.innerHTML = html;
+      }
+      renderResults(data, resultLabel);
+      $("#grade").onkeypress = event => {
+        if (event.keyCode === 13) calcGrade();
+      };
+      $("#gradePercent").onkeypress = event => {
+        if (event.keyCode === 13) calcGrade();
+      };
+      $("#addButton").onclick = event => calcGrade();
+
+      function isUser(data, username) {
+        return data.find(
+          user => user.firstname.toUpperCase() == username.toUpperCase()
+        );
+      }
+
+      function calcGrade() {
+        let username = $("#username").value;
+        let grade = $("#grade").value;
+        let user = isUser(data, username);
+
+        // check user
+        if (!user || !grade) return alert(`Not found ${username} in database!`);
+        let gradePlus = +grade * (+$("#gradePercent").value / 100 || 0.25);
+        // if($('#gradePercent').value) gradePlus = +grade * 0.25;
+        // Plus grade for user who enter name
+        user.grade = +user.grade + Number(grade);
+
+        // Plus grade for user other
+        data
+          .filter(userFilter => userFilter.id !== user.id)
+          .forEach(item => {
+            item.grade += gradePlus;
+          });
+
+        renderResults(data, resultLabel);
+        $("#username").value = "";
+        $("#grade").value = "";
+        $("#gradePercent").value = "";
+      }
+    </script>
+  </body>
+</html>
